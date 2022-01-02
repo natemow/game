@@ -1,0 +1,183 @@
+
+html,
+body {
+  background: #fff;
+  color: #000;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+form {
+  width: 250px;
+}
+  form button {
+    padding: 8px;
+  }
+
+  form > div {
+    display: flex;
+    justify-content: space-between;
+  }
+
+section {
+  width: 1200px;
+  margin: 50px auto;
+  padding: 0;
+  position: relative;
+}
+  section#game {
+    height: 650px;
+  }
+
+header,
+footer,
+main,
+canvas {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+header {
+  top: 0;
+  height: 50px;
+}
+
+  h1 {
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 1;
+    letter-spacing: -3px;
+    margin: 0;
+    padding: 0;
+  }
+
+aside {
+  display: none;
+  position: absolute;
+  top: 50px;
+  left: 100%;
+  z-index: 3;
+  width: 250px;
+  padding: 5px;
+  background: #eee;
+  border: solid 1px #ddd;
+  border-left: 0;
+  font-size: 14px;
+  line-height: 1;
+}
+  aside > div {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+  }
+
+main {
+  height: 520px;
+  margin: 50px 0 0;
+  overflow: hidden;
+  background-color: #000;
+  background-size: 20px 20px;
+  background-image: linear-gradient(to right, #252525 1px, transparent 1px), linear-gradient(to bottom, #252525 1px, transparent 1px);
+}
+
+footer {
+  bottom: 0;
+  height: 80px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+button {
+  cursor: pointer;
+  background: #eee;
+  border: solid 1px #ddd;
+  border-radius: 5px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+nav {
+  position: relative;
+}
+
+  nav.arrows {
+    display: flex;
+    align-items: flex-start;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #eee;
+    border: solid 1px #ddd;
+    margin: 0 0 0 8px;
+  }
+    nav.arrows button {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      font-size: 32px;
+      position: absolute;
+    }
+      button.up { top: -6px; left: 20px; width: 20px; }
+      button.up:after { content: '\2191'; }
+
+      button.down { bottom: 0; left: 20px; width: 20px; }
+      button.down:after { content: '\2193'; }
+
+      button.left { top: 14px; left: 0; height: 20px; line-height: 20px; }
+      button.left:after { content: '\2190'; }
+
+      button.right { top: 14px; right: 0; height: 20px; line-height: 20px; }
+      button.right:after { content: '\2192'; }
+
+  nav.others {
+
+  }
+    nav.others button {
+      height: 25px;
+      line-height: 25px;
+      padding: 0 8px;
+      margin: 0 0 0 8px;
+      font-size: 14px;
+    }
+
+.obj {
+  position: absolute;
+  display: block;
+  text-align: center;
+  line-height: 1;
+  width: 20px;
+  height: 20px;
+  background: #666;
+}
+  .obj .label {
+    position: absolute;
+    top: -8px;
+    z-index: 1;
+    padding: 2px 3px 1px 3px;
+    background: #ddd;
+    border-radius: 2px;
+    white-space: nowrap;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .-player {
+    border-radius: 50%;
+    background: #d26913;
+  }
+    .-player.-auto {
+      background: #a1d30d;
+    }
+
+  .-block {
+
+  }
