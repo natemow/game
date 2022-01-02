@@ -23,7 +23,7 @@ import { Player } from './modules/models/player.js';
 
     game = new Game(document, config);
     player = new Player()
-      .join(game, {
+      .join(game, false, {
         label: 'player 1'
       });
 
@@ -51,7 +51,7 @@ import { Player } from './modules/models/player.js';
 
       if (!player) {
         player = new Player()
-          .join(game, {
+          .join(game, false, {
             label: 'player 1'
           });
       }

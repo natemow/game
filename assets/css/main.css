@@ -151,6 +151,7 @@ nav {
 
 .obj {
   position: absolute;
+  z-index: 0;
   display: block;
   text-align: center;
   line-height: 1;
@@ -194,7 +195,7 @@ nav {
     .-health .label { display: none; }
 
   .-block {
-
+    border: solid 0 #ddd;
   }
     .-block .label { display: none; }
 

@@ -37,7 +37,7 @@ export class Geometry {
    * 2 --> Counterclockwise
    */
   orientation(p, q, r) {
-    let val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+    let val = ((q.y - p.y) * (r.x - q.x)) - ((q.x - p.x) * (r.y - q.y));
 
     if (val === 0) {
       return 0; // collinear
@@ -129,7 +129,7 @@ export class Geometry {
     } while (i !== 0);
 
     // Return true if count is odd, false otherwise
-    return (count % 2 === 1); // Same as (count%2 == 1)
+    return !(count % 2 === 0);
   }
 
 }

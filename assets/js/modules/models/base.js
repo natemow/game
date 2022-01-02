@@ -30,53 +30,76 @@ export class Base {
    * @public
    * @method join
    * @param { Game } game The game to add object to.
+   * @param { Object } attributes The custom attributes to apply to object avatar.
    * @param { Object } properties The custom properties to apply to object avatar.
    * @returns { Base } Returns the object joined to game.
    */
-  join(game, properties) {
+  join(game, attributes, properties) {
 
-    // Set game.
-    this.game = game;
-
-    const id = Utility.getUUID(),
-          type = this.constructor.name.toLowerCase(),
+    const type = this.constructor.name.toLowerCase(),
           point = new Point(
-            Utility.getRandom(0, this.game.config.map.bounds.x),
-            Utility.getRandom(0, this.game.config.map.bounds.y)
+            Utility.getRandom(0, game.config.map.bounds.x),
+            Utility.getRandom(0, game.config.map.bounds.y)
           );
 
-    this.element = Utility.setElementAttributes(this.element, {
-      id,
-      class: `obj -${type}`,
-      style: `left: ${point.x}px; top: ${point.y}px;`
-    });
+    if (this.element.hasAttribute('id')) {
+      // Update style.
+      this.element = Utility.setElementAttributes(this.element, {
+        id: this.element.id,
+        class: this.element.getAttribute('class'),
+        style: `left: ${point.x}px; top: ${point.y}px;`
+      });
 
-    this.game.config.map.element
-      .append(this.element);
+    } else {
+      // Set game.
+      this.game = game;
+
+      // Set element id.
+      const id = Utility.getUUID();
+
+      // Set element.
+      this.element = Utility
+        .setElementAttributes(this.element, {
+          id,
+          class: `obj -${type}`,
+          style: `left: ${point.x}px; top: ${point.y}px;`
+        });
+
+      if (attributes) {
+        /**
+         * Classes must be applied prior to the recursive move() + join() check
+         * below so this.element.offsetWidth + Height resolves correctly...otherwise
+         * element overlap occurs.
+         */
+        if (attributes.class) {
+          this.element.setAttribute('class', `${this.element.getAttribute('class')} ${attributes.class}`);
+        }
+      }
+
+      // Add element to map.
+      this.game.config.map.element
+        .append(this.element);
+
+      // Store element.
+      this.game.elements[this.element.id] = this;
 
 
-    /**
-     * "Move" element until randomly generated points resolve to unoccupied map location.
-     *
-     * Note: instance added to map above will be replaced during this recursion.
-     */
-    while (this.move({ direction: null }) === false) {
-      this.join(game, properties);
+      // Set element label.
+      const existing = Utility.document.getElementsByClassName(`-${type}`);
+      let label = `${type} ${(existing.length === 0 ? 1 : existing.length)}`;
+      if (properties && properties.label) {
+        label = properties.label;
+      }
+      this.element = Utility.setElementAttributes(this.element, { title: label });
+      this.element = Utility.setElementProperties(this.element, { innerHTML: `<span class="label">${label}</span>` });
+
     }
 
-    // Store element.
-    this.game.elements[this.element.id] = this;
 
-    // Set element label.
-    const existing = Utility.document.getElementsByClassName(`-${type}`);
-    let label = `${type} ${existing.length}`;
-    if (properties && properties.label) {
-      label = properties.label;
+    // "Move" element until randomly generated points resolve to unoccupied map location.
+    while (!this.move({ direction: false })) {
+      this.join(this.game, attributes, properties);
     }
-
-    this.element = Utility.setElementAttributes(this.element, { title: label });
-    this.element = Utility.setElementProperties(this.element, { innerHTML: `<span class="label">${label}</span>` });
-
 
     return this;
   }
@@ -235,24 +258,27 @@ export class Base {
     }
 
     // Verify the updated points don't conflict with an existing map object.
-    const pointsUpdated = {
+    const blocker = Utility.getMovementBlocker(this.game, this.element, {
       left,
       top,
       right: (left + this.element.offsetWidth),
       bottom: (top + this.element.offsetHeight)
-    }
+    });
 
-    // Check for blocking map object.
-    const blocker = Utility.getMovementBlocker(this.game, this.element, pointsUpdated);
     if (blocker === false) {
       // Update element coordinates.
-      this.element.setAttribute('style', `left: ${left}px; top: ${top}px;`);
-      return true;
-    }
+      this.element = Utility.setElementAttributes(this.element, {
+        style: `left: ${left}px; top: ${top}px;`
+      });
 
-    // Trigger interaction between objects.
-    if (typeof this.interact === 'function' && typeof blocker.interact === 'function') {
-      this.interact(blocker);
+      return true;
+
+    } else {
+      // Trigger interaction between objects.
+      if (typeof this.interact === 'function' && typeof blocker.interact === 'function') {
+        this.interact(blocker);
+      }
+
     }
 
     return false;
@@ -261,7 +287,7 @@ export class Base {
   /**
    * Move element on the map randomly.
    *
-   * @protected
+   * @public
    * @method moveRandom
    */
   moveRandom() {
@@ -325,7 +351,7 @@ export class Base {
       }
     }, 60);
 
-    Utility.debug(`new interval ${this.moveRandomInterval} for ${this.element.title}`);
+    // Utility.debug(`new interval ${this.moveRandomInterval} for ${this.element.title}`);
 
     return true;
   }

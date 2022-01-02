@@ -75,6 +75,7 @@ export class Utility {
    * @static
    * @method getFilteredObject
    * @param { Object } obj The object to filter.
+   * @param { function } callback The callback function.
    */
   static getFilteredObject(obj, callback) {
     return Object.fromEntries(
@@ -270,8 +271,7 @@ export class Utility {
   static getMovementBlocker(game, element, points) {
 
     const calculator = new Geometry(),
-          polygon = Utility.getPolygon(points),
-          n = polygon.length;
+          polygon = Utility.getPolygon(points);
 
     let blocker = false;
 
@@ -286,11 +286,12 @@ export class Utility {
             geometryCompare = Utility.getGeometry(compare.element);
 
       // Loop polygon points and check if each is inside geometryCompare.polygon.
-      for (let indexPoint in polygon) {
-        let p = polygon[indexPoint];
+      for (let p in polygon) {
+        p = polygon[p];
 
-        if (calculator.isInside(geometryCompare.polygon, n, p)) {
+        if (calculator.isInside(geometryCompare.polygon, geometryCompare.polygon.length, p)) {
           blocker = compare;
+          break;
         }
       }
 
