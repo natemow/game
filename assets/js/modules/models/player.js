@@ -37,7 +37,7 @@ export class Player extends Base {
   }
 
   /**
-   * The main play method.
+   * The main play method for non-automaton players.
    *
    * @public
    * @method play
@@ -45,6 +45,11 @@ export class Player extends Base {
    * @returns { boolean } The result.
    */
   play(e) {
+
+    // Automatons can't respond to keyboard events.
+    if (this.data.automaton === true) {
+      return false;
+    }
 
     // Log player instance keydown.
     if (e.type === 'keydown') {

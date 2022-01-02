@@ -205,12 +205,6 @@ class GameSingleton {
     let filtered = {};
 
     switch (type) {
-      case 'attack':
-        filtered = Utility.getFilteredObject(this.config.actions, ([key, value]) => {
-          return (key === 'Space');
-        });
-        break;
-
       case 'movement':
         filtered = Utility.getFilteredObject(this.config.actions, ([key, value]) => {
           return (key.indexOf('Arrow') === 0);

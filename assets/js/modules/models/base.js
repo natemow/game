@@ -308,16 +308,12 @@ export class Base {
     }
 
 
-    // Force keyup for current key map.
-    for (let key in this.keydownMap) {
-      this.play( new KeyboardEvent('keyup', { code: key }) );
-    }
-
     // Automatons get a fighting chance to run away during this.interact().
     this.data.automaton = true;
 
     // Set threshold and random key(s).
     const threshold = Utility.getRandom(1, 100),
+          fast = (threshold % 2 === 0),
           movements = this.game.getActions('movement'),
           combo = Utility.getRandomKey(movements),
           combos = Array.isArray(movements[combo]) ? movements[combo] : [combo];
@@ -336,9 +332,12 @@ export class Base {
     this.moveRandomInterval = setInterval(() => {
       count++;
 
-      let result = true;
+      let result = true,
+          direction = false;
       for (let key in this.keydownMap) {
-        result = result && this.play( new KeyboardEvent('keydown', { code: key, shiftKey: (threshold % 2 === 0) }) );
+        direction = Utility.getDirection(key);
+
+        result = result && this.move({ direction, fast });
       }
 
       // Player can't move, change direction.
@@ -349,7 +348,7 @@ export class Base {
       if (count === threshold) {
         this.moveRandom();
       }
-    }, 60);
+    }, 30);
 
     // Utility.debug(`new interval ${this.moveRandomInterval} for ${this.element.title}`);
 
