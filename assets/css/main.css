@@ -28,6 +28,9 @@ section {
   padding: 0;
   position: relative;
 }
+  section#config {
+    display: none;
+  }
   section#game {
     height: 650px;
   }

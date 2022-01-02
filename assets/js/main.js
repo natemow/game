@@ -19,8 +19,6 @@ import { Player } from './modules/models/player.js';
 
 
   if (!showConfigForm) {
-    configForm.setAttribute('style', 'display: none;');
-
     game = new Game(document, config);
     player = new Player()
       .join(game, false, {
@@ -30,6 +28,8 @@ import { Player } from './modules/models/player.js';
     return;
   }
 
+
+  configForm.setAttribute('style', 'display: block;');
 
   document.querySelector('#config input[type="submit"]')
     .addEventListener('click', (e) => {
