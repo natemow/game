@@ -17,10 +17,13 @@ export class Player extends Base {
 
     // Set player keydown logger.
     this.keydownMap = {};
-    // Set player health.
-    this.health = 10;
-    // Set player automaton status.
-    this.automaton = false;
+
+    // Set data.
+    this.data = {
+      ...this.data,
+      automaton: false,
+      health: 10
+    }
 
     // Set player controls.
     const events = ['keydown', 'keyup'];
@@ -96,25 +99,37 @@ export class Player extends Base {
    */
   interact(target) {
 
-    let message = `${target.element.title}`;
+    switch (target.constructor.name) {
+      case 'Player':
+        const message = `${target.element.title} `
+          + ((target.data.health - 1) > 0 ?
+            `attacked by ${this.element.title}!` :
+            `killed by ${this.element.title}!`
+          );
 
-    // Attack!
-    target.health -= 1;
-    if (target.health > 0) {
-      message += ` attacked by ${this.element.title}!`;
+        // Attack!
+        target.data.health -= 1;
 
-      // Automatons get a chance to run away randomly.
-      if (target.automaton === true) {
-        target.moveRandom();
-      }
+        if (target.data.health === 0) {
+          // Kill!
+          target.expire();
+        } else {
+          // Run away!
+          if (target.data.automaton === true) {
+            target.moveRandom();
+          }
+        }
 
-    } else {
-      // Kill!
-      target.expire();
-      message += ` killed by ${this.element.title}!`;
+        this.game.setScoreboard(message);
+        break;
+
+      case 'Health':
+        // Absorb health.
+        this.data.health += target.data.health;
+
+        target.expire();
+        break;
     }
-
-    this.game.setScoreboard(message);
 
   }
 
@@ -127,7 +142,7 @@ export class Player extends Base {
    */
   isWinner() {
 
-    if (this.expired) {
+    if (this.data.expired) {
       return false;
     }
 

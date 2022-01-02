@@ -178,6 +178,26 @@ nav {
       background: #a1d30d;
     }
 
+  .-health {
+    background: #ddd;
+    color: #c00;
+    width: 20px;
+    height: 20px;
+  }
+    .-health:after {
+      content: '\0271A';
+      position: absolute;
+      top: 12%;
+      left: 16%;
+    }
+
+    .-health .label { display: none; }
+
   .-block {
 
   }
+    .-block .label { display: none; }
+
+    .-block.-l { width: 30px; height: 30px; }
+    .-block.-xl { width: 40px; height: 40px; }
+    .-block.-xxl { width: 50px; height: 50px; }

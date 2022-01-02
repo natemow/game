@@ -5,7 +5,7 @@
 // This code is contributed by rag2127
 
 // Define Infinite (Using INT_MAX caused overflow problems)
-const INF = 5000;
+const INF = 10000;
 
 export class Point {
   constructor(x, y) {
@@ -20,13 +20,12 @@ export class Geometry {
    * Given three collinear points p, q, r, the function checks if point q lies on line segment 'pr'.
    */
   onSegment(p, q, r) {
-    if (q.x <= Math.max(p.x, r.x) &&
+    return (
+      q.x <= Math.max(p.x, r.x) &&
       q.x >= Math.min(p.x, r.x) &&
       q.y <= Math.max(p.y, r.y) &&
-      q.y >= Math.min(p.y, r.y)) {
-      return true;
-    }
-    return false;
+      q.y >= Math.min(p.y, r.y)
+    );
   }
 
   /**
@@ -38,13 +37,13 @@ export class Geometry {
    * 2 --> Counterclockwise
    */
   orientation(p, q, r) {
-    let val = (q.y - p.y) * (r.x - q.x)
-      - (q.x - p.x) * (r.y - q.y);
+    let val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
 
     if (val === 0) {
       return 0; // collinear
     }
-    return (val > 0) ? 1 : 2; // clock or counterclock wise
+
+    return (val > 0 ? 1 : 2); // clock or counterclock wise
   }
 
   /**
@@ -107,7 +106,9 @@ export class Geometry {
 
     // Count intersections of the above line
     // with sides of polygon
-    let count = 0, i = 0;
+    let count = 0,
+        i = 0;
+
     do {
       let next = (i + 1) % n;
 
@@ -118,18 +119,17 @@ export class Geometry {
         // If the point 'p' is collinear with line
         // segment 'i-next', then check if it lies
         // on segment. If it lies, return true, otherwise false
-        if (this.orientation(polygon[i], p, polygon[next]) == 0) {
-          return this.onSegment(polygon[i], p,
-            polygon[next]);
+        if (this.orientation(polygon[i], p, polygon[next]) === 0) {
+          return this.onSegment(polygon[i], p, polygon[next]);
         }
 
         count++;
       }
       i = next;
-    } while (i != 0);
+    } while (i !== 0);
 
     // Return true if count is odd, false otherwise
-    return (count % 2 == 1); // Same as (count%2 == 1)
+    return (count % 2 === 1); // Same as (count%2 == 1)
   }
 
 }

@@ -17,8 +17,10 @@ export class Base {
     // Set element.
     this.element = (element || false);
 
-    // Set expiration status.
-    this.expired = false;
+    // Set data.
+    this.data = {
+      expired: false
+    };
 
   }
 
@@ -94,7 +96,7 @@ export class Base {
     delete this.game.elements[this.element.id];
     this.element.remove();
 
-    this.expired = true;
+    this.data.expired = true;
 
     Utility.debug(`${this.element.title} expired`);
 
@@ -270,7 +272,7 @@ export class Base {
     }
 
     // Exit if expired or key map doesn't exist.
-    if (this.expired || typeof this.keydownMap === 'undefined') {
+    if (this.data.expired || typeof this.keydownMap === 'undefined') {
       return false;
     }
     // Exit if winner exists.
@@ -286,7 +288,7 @@ export class Base {
     }
 
     // Automatons get a fighting chance to run away during this.interact().
-    this.automaton = true;
+    this.data.automaton = true;
 
     // Set threshold and random key(s).
     const threshold = Utility.getRandom(1, 100),

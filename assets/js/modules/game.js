@@ -3,6 +3,7 @@ import config from '../config.js';
 import { Utility } from './utility.js';
 import { Point } from './geometry.js';
 import { Block } from './models/block.js';
+import { Health } from './models/health.js';
 import { Player } from './models/player.js';
 
 class GameSingleton {
@@ -138,9 +139,9 @@ class GameSingleton {
 
       for (let index in collection) {
         const value = collection[index],
-          direction = Utility.getDirection(value),
-          title = (direction ? value.replace('Arrow', '') : value),
-          className = (direction ? direction : value);
+              direction = Utility.getDirection(value),
+              title = (direction ? value.replace('Arrow', '') : value),
+              className = (direction ? direction : value);
 
         const button = Utility.createElement('button', {
           class: className,
@@ -160,24 +161,35 @@ class GameSingleton {
     buildFooterNav('arrows', arrows);
 
 
+
     // Set some random blocks.
     for (let index in Utility.getRange(10)) {
-      new Block()
-        .join(this, {});
+      new Block().join(this, {});
+
+      // const block = new Block().join(this, {}),
+      //       size = Utility.getRandomFromArray(['', '-l', '-xl', '-xxl']);
+      //
+      // Utility.setElementAttributes(block.element, {
+      //   class: `${block.element.getAttribute('class')} ${size}`
+      // });
     }
 
     // Set some random players.
     for (let index in Utility.getRange(10)) {
-      const player = new Player()
-        .join(this, {
-          label: `zombie ${(parseInt(index) + 1)}`
-        });
+      const player = new Player().join(this, {
+        label: `zombie ${(parseInt(index) + 1)}`
+      });
 
       Utility.setElementAttributes(player.element, {
         class: `${player.element.getAttribute('class')} -auto`
       });
 
       player.moveRandom();
+    }
+
+    // Set some random health.
+    for (let index in Utility.getRange(10)) {
+      new Health().join(this, {});
     }
 
   }
@@ -293,7 +305,7 @@ class GameSingleton {
     if (!winner) {
       for (let key in players) {
         message = Utility.createElement('div', {}, {
-          innerHTML: `<div>${players[key].element.title}</div><div>${players[key].health}</div>`
+          innerHTML: `<div>${players[key].element.title}</div><div>${players[key].data.health}</div>`
         });
         board.append(message);
       }
