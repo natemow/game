@@ -164,14 +164,12 @@ class GameSingleton {
 
     // Set some random blocks.
     for (let index in Utility.getRange(10)) {
-      new Block().join(this, {});
+      const block = new Block().join(this, {}),
+            size = Utility.getRandomFromArray(['', '-l', '-xl', '-xxl']);
 
-      // const block = new Block().join(this, {}),
-      //       size = Utility.getRandomFromArray(['', '-l', '-xl', '-xxl']);
-      //
-      // Utility.setElementAttributes(block.element, {
-      //   class: `${block.element.getAttribute('class')} ${size}`
-      // });
+      Utility.setElementAttributes(block.element, {
+        class: `${block.element.getAttribute('class')} ${size}`
+      });
     }
 
     // Set some random players.

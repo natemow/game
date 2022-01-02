@@ -269,8 +269,9 @@ export class Utility {
    */
   static getMovementBlocker(game, element, points) {
 
-    const geometry = Utility.getGeometry(elements),
-          n = geometry.polygon.length;
+    const calculator = new Geometry(),
+          polygon = Utility.getPolygon(points),
+          n = polygon.length;
 
     let blocker = false;
 
@@ -281,15 +282,14 @@ export class Utility {
       }
 
       // Get comparison points for current element.
-      const calculator = new Geometry(),
-            compare = game.elements[id],
+      const compare = game.elements[id],
             geometryCompare = Utility.getGeometry(compare.element);
 
-      // Loop comparison points and check if each is inside points.
-      for (let indexPoint in geometryCompare.polygon) {
-        let p = geometryCompare.polygon[indexPoint];
+      // Loop polygon points and check if each is inside geometryCompare.polygon.
+      for (let indexPoint in polygon) {
+        let p = polygon[indexPoint];
 
-        if (calculator.isInside(polygon, n, p)) {
+        if (calculator.isInside(geometryCompare.polygon, n, p)) {
           blocker = compare;
         }
       }
