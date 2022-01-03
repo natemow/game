@@ -90,8 +90,8 @@ export class Base {
       if (properties && properties.label) {
         label = properties.label;
       }
-      this.element = Utility.setElementAttributes(this.element, { title: label });
-      this.element = Utility.setElementProperties(this.element, { innerHTML: `<span class="label">${label}</span>` });
+      this.element.setAttribute('title', label);
+      this.element.innerHTML = `<span class="label">${label}</span>`;
 
     }
 
@@ -117,7 +117,10 @@ export class Base {
     }
 
     delete this.game.elements[this.element.id];
-    this.element.remove();
+
+    Utility.fadeOut(this.element, () => {
+      this.element.remove();
+    });
 
     this.data.expired = true;
 
@@ -267,9 +270,7 @@ export class Base {
 
     if (blocker === false) {
       // Update element coordinates.
-      this.element = Utility.setElementAttributes(this.element, {
-        style: `left: ${left}px; top: ${top}px;`
-      });
+      this.element.setAttribute('style', `left: ${left}px; top: ${top}px;`);
 
       return true;
 
@@ -289,8 +290,9 @@ export class Base {
    *
    * @public
    * @method moveRandom
+   * @param { boolean } fast Force fast movement.
    */
-  moveRandom() {
+  moveRandom(fast) {
 
     // Clear any previous interval.
     if (typeof this.moveRandomInterval !== 'undefined') {
@@ -313,10 +315,11 @@ export class Base {
 
     // Set threshold and random key(s).
     const threshold = Utility.getRandom(1, 100),
-          fast = (threshold % 2 === 0),
           movements = this.game.getActions('movement'),
           combo = Utility.getRandomKey(movements),
           combos = Array.isArray(movements[combo]) ? movements[combo] : [combo];
+
+    fast = (fast || (threshold % 2 === 0));
 
     this.keydownMap = {};
     for (let i in combos) {

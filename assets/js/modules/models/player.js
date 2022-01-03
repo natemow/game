@@ -115,13 +115,15 @@ export class Player extends Base {
         // Attack!
         target.data.health -= 1;
 
+        Utility.toggleClass(target.element, '-negative', 250);
+
         if (target.data.health === 0) {
           // Kill!
           target.expire();
         } else {
           // Run away!
           if (target.data.automaton === true) {
-            target.moveRandom();
+            target.moveRandom(true);
           }
         }
 
@@ -131,6 +133,8 @@ export class Player extends Base {
       case 'Health':
         // Absorb health.
         this.data.health += target.data.health;
+
+        Utility.toggleClass(this.element, '-positive', 250);
 
         target.expire();
         break;

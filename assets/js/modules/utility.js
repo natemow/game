@@ -186,6 +186,55 @@ export class Utility {
     return element;
   }
 
+  /**
+   * Toggle element class.
+   *
+   * @static
+   * @method toggleClass
+   * @param { Element } element The element.
+   * @param { string } className The class name.
+   * @param { number } timeout Remove the class after N ms.
+   */
+  static toggleClass(element, className, timeout) {
+
+    element.classList.toggle(className);
+
+    if (timeout && timeout > 0) {
+      const timer = setTimeout(() => {
+        element.classList.toggle(className);
+        clearTimeout(timer);
+      }, timeout);
+    }
+
+  }
+
+  /**
+   * Fade element out.
+   *
+   * @static
+   * @method toggleClass
+   * @param { Element } element The element.
+   * @param { function } callback Callback after fade finishes.
+   */
+  static fadeOut(element, callback) {
+
+    const interval = setInterval(function () {
+      if (!element.style.opacity) {
+        element.style.opacity = 1;
+      }
+      if (element.style.opacity > 0) {
+        element.style.opacity -= 0.1;
+      } else {
+        clearInterval(interval);
+
+        if (typeof callback === 'function') {
+          callback();
+        }
+      }
+    }, 20);
+
+  }
+
 
   // Geometry methods.
   /**

@@ -173,6 +173,14 @@ nav {
     font-size: 12px;
     line-height: 1;
   }
+  .obj.-positive {
+    box-shadow: 0 0 8px 2px rgba(255, 255, 255, .75);
+    transition: box-shadow 0s ease-out;
+  }
+  .obj.-negative {
+    box-shadow: 0 0 8px 2px rgba(255, 0, 0, .75);
+    transition: box-shadow 0s ease-out;
+  }
 
   .-player {
     border-radius: 50%;
