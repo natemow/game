@@ -2,10 +2,10 @@
 import { Utility } from '../utility.js';
 import { Base } from './base.js';
 
-export class Health extends Base {
+export class Fast extends Base {
 
   /**
-   * Initialize the Health.
+   * Initialize the Fast.
    */
   constructor() {
 
@@ -19,7 +19,7 @@ export class Health extends Base {
     this.data = {
       ...this.data,
       snapTo: true,
-      health: 1
+      fast: 1
     }
 
     return this;

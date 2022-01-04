@@ -155,12 +155,13 @@ nav {
 .obj {
   position: absolute;
   z-index: 0;
+  opacity: 1;
   display: block;
   text-align: center;
   line-height: 1;
   width: 20px;
   height: 20px;
-  background: #666;
+  background: #252525;
 }
   .obj .label {
     position: absolute;
@@ -185,31 +186,69 @@ nav {
   .-player {
     border-radius: 50%;
     background: #d26913;
+    /* Fit between snapTo blocks. */
+    width: 18px;
+    height: 18px;
   }
-    .-player.-auto {
-      background: #a1d30d;
+
+  .-automaton {
+    border-radius: 50%;
+    background: #a1d30d;
+    /* Fit between snapTo blocks. */
+    width: 18px;
+    height: 18px;
+  }
+
+  .-fast {
+    background: transparent;
+    border: solid 1px #252525;
+    color: #fc0;
+    width: 19px;
+    height: 19px;
+  }
+    .-fast:after {
+      content: '\02605';
+      position: absolute;
+      top: 10%;
+      left: 13%;
     }
 
   .-health {
-    background: #ddd;
+    background: #d5d5d5;
+    border: solid 1px #252525;
     color: #c00;
-    width: 20px;
-    height: 20px;
+    width: 19px;
+    height: 19px;
   }
     .-health:after {
       content: '\0271A';
       position: absolute;
-      top: 12%;
+      top: 11%;
+      left: 15%;
+    }
+
+  .-mine {
+    background: transparent;
+    color: #252525;
+    border: solid 1px #252525;
+    width: 19px;
+    height: 19px;
+  }
+    .-mine:after {
+      content: '\02716';
+      position: absolute;
+      top: 13%;
       left: 16%;
     }
 
-    .-health .label { display: none; }
+  .-block { }
+    .-block.-l { width: 40px; height: 40px; }
+    .-block.-xl { width: 60px; height: 60px; }
+    .-block.-xxl { width: 80px; height: 80px; }
 
-  .-block {
-    border: solid 0 #ddd;
-  }
-    .-block .label { display: none; }
-
-    .-block.-l { width: 30px; height: 30px; }
-    .-block.-xl { width: 40px; height: 40px; }
-    .-block.-xxl { width: 50px; height: 50px; }
+.-fast .label,
+.-block .label,
+.-health .label,
+.-mine .label {
+  display: none;
+}

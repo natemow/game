@@ -2,10 +2,10 @@
 import { Utility } from '../utility.js';
 import { Base } from './base.js';
 
-export class Health extends Base {
+export class Mine extends Base {
 
   /**
-   * Initialize the Health.
+   * Initialize the Mine.
    */
   constructor() {
 
@@ -19,7 +19,7 @@ export class Health extends Base {
     this.data = {
       ...this.data,
       snapTo: true,
-      health: 1
+      health: Utility.getRandom(1, Base.maxHealth)
     }
 
     return this;

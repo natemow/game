@@ -2,9 +2,12 @@
 import config from '../config.js';
 import { Utility } from './utility.js';
 import { Point } from './geometry.js';
+import { Base } from './models/base.js';
 import { Block } from './models/block.js';
+import { Fast } from './models/fast.js';
 import { Health } from './models/health.js';
-import { Player } from './models/player.js';
+import { Mine } from './models/mine.js';
+import { Automaton } from './models/automaton.js';
 
 class GameSingleton {
 
@@ -162,30 +165,38 @@ class GameSingleton {
 
 
 
-    // Set some random blocks.
-    for (let index in Utility.getRange(10)) {
-      const block = new Block(),
-            size = Utility.getRandomFromArray(['', '-l', '-xl', '-xxl']);
+    const range = Utility.getRange(10);
 
-      block
+    // Set some random blocks.
+    for (let i in range) {
+      const size = Utility.getRandomFromArray(['', '-l', '-xl', '-xxl']);
+      new Block()
         .join(this, { class: size }, false);
     }
 
-    // Set some random players.
-    for (let index in Utility.getRange(10)) {
-      const player = new Player();
-
-      player
-        .join(this, { class: '-auto' }, { label: `zombie ${(parseInt(index) + 1)}` })
-        .moveRandom();
+    // Set some random fasts.
+    for (let i in Utility.getRange(4)) {
+      new Fast()
+        .join(this, false, false);
     }
 
     // Set some random health.
-    for (let index in Utility.getRange(10)) {
-      const health = new Health();
+    for (let i in range) {
+      new Health()
+        .join(this, false, false);
+    }
 
-      health
-        .join(this, {}, false);
+    // Set some random mines.
+    for (let i in range) {
+      new Mine()
+        .join(this, false, false);
+    }
+
+    // Set some random automatons.
+    for (let i in range) {
+      new Automaton()
+        .join(this, false, { label: `zombie ${(parseInt(i) + 1)}` })
+        .moveRandom();
     }
 
   }
@@ -232,7 +243,9 @@ class GameSingleton {
    */
   getPlayers() {
     return Utility.getFilteredObject(this.elements, ([key, value]) => {
-      return (value.constructor.name === 'Player');
+      return (value.constructor.name === 'Player' || value.constructor.name === 'Automaton')
+        && (value.data.health > 0)
+        && (value.data.expired === false);
     });
   }
 
@@ -294,8 +307,13 @@ class GameSingleton {
     // Print scores.
     if (!winner) {
       for (let key in players) {
+        const fast = (players[key].data.fast - Base.minFast);
+
         message = Utility.createElement('div', {}, {
-          innerHTML: `<div>${players[key].element.title}</div><div>${players[key].data.health}</div>`
+          innerHTML: `
+            <div>${players[key].element.title}</div>
+            <div>${(fast >= 1 ? `+${fast} fast mode` : '')}</div>
+            <div>${players[key].data.health}</div>`
         });
         board.append(message);
       }

@@ -21,8 +21,8 @@ export class Player extends Base {
     // Set data.
     this.data = {
       ...this.data,
-      automaton: false,
-      health: 10
+      health: Base.maxHealth,
+      fast: 4
     }
 
     // Set player controls.
@@ -47,7 +47,7 @@ export class Player extends Base {
   play(e) {
 
     // Automatons can't respond to keyboard events.
-    if (this.data.automaton === true) {
+    if (this.constructor.name === 'Automaton') {
       return false;
     }
 
@@ -98,15 +98,18 @@ export class Player extends Base {
   /**
    * Callback fired when player interacts with another interactive object.
    *
-   * @protected
+   * @public
    * @method interact
    * @param { Base } target The object being interacted with.
    */
   interact(target) {
 
+    let message = false;
+
     switch (target.constructor.name) {
       case 'Player':
-        const message = `${target.element.title} `
+      case 'Automaton':
+        message = `${target.element.title} `
           + ((target.data.health - 1) > 0 ?
             `attacked by ${this.element.title}!` :
             `killed by ${this.element.title}!`
@@ -120,26 +123,52 @@ export class Player extends Base {
         if (target.data.health === 0) {
           // Kill!
           target.expire();
+
         } else {
           // Run away!
-          if (target.data.automaton === true) {
+          if (target.constructor.name === 'Automaton') {
             target.moveRandom(true);
           }
-        }
 
-        this.game.setScoreboard(message);
+        }
+        break;
+
+      case 'Fast':
+        // Increment fast.
+        this.data.fast += target.data.fast;
+
+        message = `${this.element.title} (+${(this.data.fast - Base.minFast)}) fast mode!`;
+
+        target.expire();
         break;
 
       case 'Health':
-        // Absorb health.
+        message = `${this.element.title} (+${target.data.health}) health!`;
+
+        // Increment health.
         this.data.health += target.data.health;
 
         Utility.toggleClass(this.element, '-positive', 250);
 
         target.expire();
         break;
+
+      case 'Mine':
+        message = `${this.element.title} (-${target.data.health}) mine damage!`;
+
+        // Decrement health.
+        this.data.health -= target.data.health;
+        target.expire();
+
+        Utility.toggleClass(this.element, '-negative', 250);
+
+        if (this.data.health <= 0) {
+          this.expire();
+        }
+        break;
     }
 
+    this.game.setScoreboard(message);
   }
 
   /**

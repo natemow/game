@@ -1,11 +1,11 @@
 
 import { Utility } from '../utility.js';
-import { Base } from './base.js';
+import { Player } from './player.js';
 
-export class Block extends Base {
+export class Automaton extends Player {
 
   /**
-   * Initialize the Block.
+   * Initialize the Automaton.
    */
   constructor() {
 
@@ -14,12 +14,6 @@ export class Block extends Base {
 
     // Initialize base.
     super(element);
-
-    // Set data.
-    this.data = {
-      ...this.data,
-      snapTo: true
-    }
 
     return this;
   }

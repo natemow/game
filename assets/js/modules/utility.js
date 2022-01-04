@@ -219,19 +219,15 @@ export class Utility {
   static fadeOut(element, callback) {
 
     const interval = setInterval(function () {
-      if (!element.style.opacity) {
-        element.style.opacity = 1;
-      }
       if (element.style.opacity > 0) {
         element.style.opacity -= 0.1;
       } else {
         clearInterval(interval);
-
         if (typeof callback === 'function') {
           callback();
         }
       }
-    }, 20);
+    }, 10);
 
   }
 

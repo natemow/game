@@ -1,11 +1,11 @@
 export default {
-  "debug": false,
-  "map": {
+  'debug': false,
+  'map': {
 
     /**
      * Player movement can wrap/pass through map bounds.
      */
-    "wrap": false,
+    'wrap': false,
 
     /**
      * Player movement snaps to grid.
@@ -14,17 +14,17 @@ export default {
      *
      * The actions.Shift* fast mode is disabled if snapTo is enabled.
      */
-    "snapTo": false
+    'snapTo': false
 
   },
-  "actions": {
-    "ArrowLeft": "move",
-    "ArrowRight": "move",
-    "ArrowUp": "move",
-    "ArrowDown": "move",
-    "Shift": "fast"
+  'actions': {
+    'ArrowLeft': 'move',
+    'ArrowRight': 'move',
+    'ArrowUp': 'move',
+    'ArrowDown': 'move',
+    'Shift': 'fast'
   },
-  "header": {
-    "title": "Game"
+  'header': {
+    'title': 'Game'
   }
 }

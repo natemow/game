@@ -5,6 +5,10 @@ import { Utility } from '../utility.js';
 
 export class Base {
 
+  static snapToValue = 20;
+  static minFast = 4;
+  static maxHealth = 10;
+
   /**
    * Module base.
    *
@@ -116,13 +120,12 @@ export class Base {
       clearInterval(this.moveRandomInterval);
     }
 
-    delete this.game.elements[this.element.id];
-
     Utility.fadeOut(this.element, () => {
-      this.element.remove();
-    });
+      delete this.game.elements[this.element.id];
 
-    this.data.expired = true;
+      this.element.remove();
+      this.data.expired = true;
+    });
 
     Utility.debug(`${this.element.title} expired`);
 
@@ -213,16 +216,18 @@ export class Base {
    */
   move(params) {
 
-    const geometry = Utility.getGeometry(this.element),
-          snapTo = this.game.config.map.snapTo,
-          doSnapTo = Number.isInteger(snapTo);
+    const geometry = Utility.getGeometry(this.element);
 
-    // Set fast or standard speed for non-snapTo config.
-    let offset = (params.fast === true ? 4 : 1);
+    // Get global or element snapTo.
+    let snapTo = this.game.config.map.snapTo;
+    if (this.data.snapTo === true) {
+      snapTo = Base.snapToValue;
+    }
 
-    // Fast mode doesn't apply to snapTo config.
-    if (doSnapTo) {
-      offset = snapTo;
+    // Set standard or fast(er) speed.
+    let offset = 1;
+    if (params.fast === true) {
+      offset = (Number.isInteger(this.data.fast) ? this.data.fast : Base.minFast);
     }
 
     let left = geometry.points.left,
@@ -236,10 +241,11 @@ export class Base {
     }
 
     // Snap-to nearest configured integer.
-    if (doSnapTo) {
+    if (snapTo !== false) {
       left = (Math.round(left / snapTo) * snapTo);
       top = (Math.round(top / snapTo) * snapTo);
     }
+
 
     if (this.game.config.map.wrap === true) {
       // Wrap X/Y movement.
@@ -260,6 +266,7 @@ export class Base {
       top = topNew;
     }
 
+
     // Verify the updated points don't conflict with an existing map object.
     const blocker = Utility.getMovementBlocker(this.game, this.element, {
       left,
@@ -271,7 +278,6 @@ export class Base {
     if (blocker === false) {
       // Update element coordinates.
       this.element.setAttribute('style', `left: ${left}px; top: ${top}px;`);
-
       return true;
 
     } else {
@@ -309,9 +315,6 @@ export class Base {
       return false;
     }
 
-
-    // Automatons get a fighting chance to run away during this.interact().
-    this.data.automaton = true;
 
     // Set threshold and random key(s).
     const threshold = Utility.getRandom(1, 100),
