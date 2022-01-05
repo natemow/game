@@ -50,13 +50,13 @@ class GameSingleton {
    */
   setConfig(properties) {
 
-    const main = Utility.document.getElementsByTagName('main')[0];
+    const map = Utility.document.getElementById('map');
 
     // Set map config.
     config.map = {
       ...config.map,
-      bounds: new Point(main.offsetWidth, main.offsetHeight),
-      element: main
+      bounds: new Point(map.offsetWidth, map.offsetHeight),
+      element: map
     };
 
     if (properties.map) {
@@ -88,15 +88,17 @@ class GameSingleton {
 
     const element = Utility.document.getElementById('game'),
           main = Utility.createElement('main', false, false),
+          map = Utility.createElement('article', { id: 'map' }, false),
+          sidebar = Utility.createElement('aside', false, false),
           header = Utility.createElement('header', false, false),
-          footer = Utility.createElement('footer', false, false),
-          scoreboard = Utility.createElement('aside', { id: 'scoreboard' }, false);
+          footer = Utility.createElement('footer', false, false);
 
     // Set game containers.
     element.append(header);
-    element.append(scoreboard);
     element.append(main);
     element.append(footer);
+    main.append(map);
+    main.append(sidebar);
 
     // Set game config.
     this.setConfig(properties);
@@ -134,7 +136,7 @@ class GameSingleton {
       }
     }
 
-    const buildFooterNav = (group, collection) => {
+    const buildHelp = (group, collection, element) => {
 
       const nav = Utility.createElement('nav', {
         class: group
@@ -157,11 +159,17 @@ class GameSingleton {
         nav.append(button);
       }
 
-      footer.append(nav);
+      element.append(nav);
     }
 
-    buildFooterNav('others', others);
-    buildFooterNav('arrows', arrows);
+    const scoreboard = Utility.createElement('div', { id: 'scoreboard' }, false),
+          controls = Utility.createElement('div', { id: 'controls' }, false);
+
+    buildHelp('others', others, controls);
+    buildHelp('arrows', arrows, controls);
+
+    sidebar.append(scoreboard);
+    sidebar.append(controls);
 
 
 
@@ -285,7 +293,6 @@ class GameSingleton {
           winner = this.getWinner();
 
     // Clear board.
-    board.setAttribute('style', 'display: block;');
     while (board.firstElementChild) {
       board.firstElementChild.remove();
     }

@@ -137,6 +137,8 @@ export class Player extends Base {
         // Increment fast.
         this.data.fast += target.data.fast;
 
+        Utility.toggleClass(this.element, '-positive', 250);
+
         message = `${this.element.title} (+${(this.data.fast - Base.minFast)}) fast mode!`;
 
         target.expire();
@@ -163,6 +165,8 @@ export class Player extends Base {
         Utility.toggleClass(this.element, '-negative', 250);
 
         if (this.data.health <= 0) {
+          message = `${this.element.title} killed by a mine!`;
+
           this.expire();
         }
         break;
