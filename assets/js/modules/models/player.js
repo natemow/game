@@ -5,25 +5,22 @@ import { Base } from './base.js';
 export class Player extends Base {
 
   /**
-   * Initialize the Player.
+   * @inheritdoc
    */
-  constructor() {
+  constructor(game, attributes, properties) {
 
-    // Build element.
-    const element = Utility.createElement('div', false, false);
-
-    // Initialize base.
-    super(element);
-
-    // Set player keydown logger.
-    this.keydownMap = {};
+    super(game, attributes, properties);
 
     // Set data.
     this.data = {
       ...this.data,
+      snapTo: false,
       health: Base.maxHealth,
       fast: 4
     }
+
+    // Set player keydown logger.
+    this.keydownMap = {};
 
     // Set player controls.
     const events = ['keydown', 'keyup'];

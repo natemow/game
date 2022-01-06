@@ -5,33 +5,19 @@ import { Base } from './base.js';
 export class Mine extends Base {
 
   /**
-   * Initialize the Mine.
+   * @inheritdoc
    */
-  constructor() {
+  constructor(game, attributes, properties) {
 
-    // Build element.
-    const element = Utility.createElement('div', false, false);
-
-    // Initialize base.
-    super(element);
+    super(game, attributes, properties);
 
     // Set data.
     this.data = {
       ...this.data,
-      snapTo: true,
-      health: Utility.getRandom(1, Base.maxHealth)
+      health: Utility.getRandom(1, 10)
     }
 
     return this;
   }
-
-  /**
-   * Dummy callback to support player interaction.
-   *
-   * @protected
-   * @method interact
-   * @param { Base } target The object being interacted with.
-   */
-  interact(target) { }
 
 }

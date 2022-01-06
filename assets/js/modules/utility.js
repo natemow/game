@@ -31,8 +31,10 @@ export class Utility {
     min = Math.ceil(min);
     max = Math.floor(max);
 
-    // The max is exclusive and the min is inclusive.
-    return Math.floor(Math.random() * ((max - min) + min));
+    // In floor below, the max is exclusive and the min is inclusive; add +1 here.
+    max += 1;
+
+    return Math.floor(Math.random() * (max - min)) + min;
   }
 
   /**

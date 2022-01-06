@@ -178,32 +178,33 @@ class GameSingleton {
     // Set some random blocks.
     for (let i in range) {
       const size = Utility.getRandomFromArray(['', '-l', '-xl', '-xxl']);
-      new Block()
-        .join(this, { class: size }, false);
+
+      new Block(this, { class: size }, false)
+        .join();
     }
 
     // Set some random fasts.
     for (let i in Utility.getRange(4)) {
-      new Fast()
-        .join(this, false, false);
+      new Fast(this)
+        .join();
     }
 
     // Set some random health.
     for (let i in range) {
-      new Health()
-        .join(this, false, false);
+      new Health(this)
+        .join();
     }
 
     // Set some random mines.
     for (let i in range) {
-      new Mine()
-        .join(this, false, false);
+      new Mine(this)
+        .join();
     }
 
     // Set some random automatons.
     for (let i in range) {
-      new Automaton()
-        .join(this, false, { label: `zombie ${(parseInt(i) + 1)}` })
+      new Automaton(this,false, { title: `zombie ${(parseInt(i) + 1)}` })
+        .join()
         .moveRandom();
     }
 

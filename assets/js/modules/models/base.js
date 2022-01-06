@@ -10,22 +10,68 @@ export class Base {
   static maxHealth = 10;
 
   /**
-   * Module base.
+   * Initialize the object.
    *
    * @public
    * @method constructor
-   * @param { Element } element The current object avatar element.
+   * @param { Game } game The game to add object to.
+   * @param { Object } attributes The custom attributes to apply to object avatar.
+   * @param { Object } properties The custom properties to apply to object avatar.
+   * @returns { Base } Returns the object.
    */
-  constructor(element) {
+  constructor(game, attributes, properties) {
 
-    // Set element.
-    this.element = (element || false);
+    const id = Utility.getUUID(),
+          type = this.constructor.name.toLowerCase(),
+          existing = Utility.document.getElementsByClassName(`-${type}`);
+
+    let eClass = `obj -${type}`,
+        eTitle = `${type} ${(existing.length === 0 ? 1 : existing.length)}`;
+
+
+    // Set element attributes.
+    if (attributes) {
+      if (attributes.class) {
+        eClass += ` ${attributes.class}`;
+      }
+    }
+
+    // Set element properties.
+    if (properties) {
+      if (properties.title) {
+        eTitle = properties.title;
+      }
+    }
+
+    // Build element.
+    this.element = Utility.createElement('div', {
+      id,
+      'data-type': type,
+      class: eClass
+    }, {
+      title: eTitle,
+      innerHTML: `<span class="label">${eTitle}</span>`
+    });
+
+
+    // Set game.
+    this.game = game;
+
+    // Add element to map.
+    this.game.config.map.element.append(this.element);
+
+    // Store element.
+    this.game.elements[this.element.id] = this;
 
     // Set data.
     this.data = {
-      expired: false
+      expired: false,
+      snapTo: true,
+      health: 1,
+      fast: 1
     };
 
+    return this;
   }
 
   /**
@@ -33,76 +79,21 @@ export class Base {
    *
    * @public
    * @method join
-   * @param { Game } game The game to add object to.
-   * @param { Object } attributes The custom attributes to apply to object avatar.
-   * @param { Object } properties The custom properties to apply to object avatar.
    * @returns { Base } Returns the object joined to game.
    */
-  join(game, attributes, properties) {
+  join() {
 
-    const type = this.constructor.name.toLowerCase(),
-          point = new Point(
-            Utility.getRandom(0, game.config.map.bounds.x),
-            Utility.getRandom(0, game.config.map.bounds.y)
+    const point = new Point(
+            Utility.getRandom(0, this.game.config.map.bounds.x),
+            Utility.getRandom(0, this.game.config.map.bounds.y)
           );
 
-    if (this.element.hasAttribute('id')) {
-      // Update style.
-      this.element = Utility.setElementAttributes(this.element, {
-        id: this.element.id,
-        class: this.element.getAttribute('class'),
-        style: `left: ${point.x}px; top: ${point.y}px;`
-      });
-
-    } else {
-      // Set game.
-      this.game = game;
-
-      // Set element id.
-      const id = Utility.getUUID();
-
-      // Set element.
-      this.element = Utility
-        .setElementAttributes(this.element, {
-          id,
-          class: `obj -${type}`,
-          style: `left: ${point.x}px; top: ${point.y}px;`
-        });
-
-      if (attributes) {
-        /**
-         * Classes must be applied prior to the recursive move() + join() check
-         * below so this.element.offsetWidth + Height resolves correctly...otherwise
-         * element overlap occurs.
-         */
-        if (attributes.class) {
-          this.element.setAttribute('class', `${this.element.getAttribute('class')} ${attributes.class}`);
-        }
-      }
-
-      // Add element to map.
-      this.game.config.map.element
-        .append(this.element);
-
-      // Store element.
-      this.game.elements[this.element.id] = this;
-
-
-      // Set element label.
-      const existing = Utility.document.getElementsByClassName(`-${type}`);
-      let label = `${type} ${(existing.length === 0 ? 1 : existing.length)}`;
-      if (properties && properties.label) {
-        label = properties.label;
-      }
-      this.element.setAttribute('title', label);
-      this.element.innerHTML = `<span class="label">${label}</span>`;
-
-    }
-
+    // Set element coordinates.
+    this.element.style = `left: ${point.x}px; top: ${point.y}px;`;
 
     // "Move" element until randomly generated points resolve to unoccupied map location.
     while (!this.move({ direction: false })) {
-      this.join(this.game, attributes, properties);
+      this.join();
     }
 
     return this;
@@ -130,6 +121,15 @@ export class Base {
     Utility.debug(`${this.element.title} expired`);
 
   }
+
+  /**
+   * Stub callback to support player interaction.
+   *
+   * @public
+   * @method interact
+   * @param { Base } target The object being interacted with.
+   */
+  interact(target) { }
 
 
 

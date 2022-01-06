@@ -20,10 +20,8 @@ import { Player } from './modules/models/player.js';
 
   if (!showConfigForm) {
     game = new Game(document, config);
-    player = new Player()
-      .join(game, false, {
-        label: 'player 1'
-      });
+    player = new Player(game,false, false)
+      .join();
 
     return;
   }
@@ -50,10 +48,8 @@ import { Player } from './modules/models/player.js';
       }
 
       if (!player) {
-        player = new Player()
-          .join(game, false, {
-            label: 'player 1'
-          });
+        player = new Player(game,false, false)
+          .join();
       }
 
       configForm.setAttribute('style', 'display: none;');
