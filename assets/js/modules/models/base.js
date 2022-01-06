@@ -23,10 +23,10 @@ export class Base {
 
     const id = Utility.getUUID(),
           type = this.constructor.name.toLowerCase(),
-          existing = Utility.document.getElementsByClassName(`-${type}`);
+          existing = Utility.document.querySelectorAll(`[data-type="${type}"]`);
 
-    let eClass = `obj -${type}`,
-        eTitle = `${type} ${(existing.length === 0 ? 1 : existing.length)}`;
+    let eClass = `obj`,
+        eTitle = `${type} ${(existing.length + 1)}`;
 
 
     // Set element attributes.

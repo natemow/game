@@ -178,6 +178,15 @@ nav {
   height: 20px;
   background: #252525;
 }
+  .obj.-positive {
+    box-shadow: 0 0 8px 2px #fc0;
+    transition: box-shadow 0s ease-out;
+  }
+  .obj.-negative {
+    box-shadow: 0 0 8px 2px #c00;
+    transition: box-shadow 0s ease-out;
+  }
+
   .obj .label {
     position: absolute;
     top: -8px;
@@ -188,17 +197,21 @@ nav {
     white-space: nowrap;
     font-size: 12px;
     line-height: 1;
-  }
-  .obj.-positive {
-    box-shadow: 0 0 8px 2px #fc0;
-    transition: box-shadow 0s ease-out;
-  }
-  .obj.-negative {
-    box-shadow: 0 0 8px 2px #c00;
-    transition: box-shadow 0s ease-out;
+    display: none;
   }
 
-  .-player {
+    [data-type='player'] .label,
+    [data-type='automaton'] .label {
+      display: block;
+    }
+
+
+  [data-type='block'] { }
+    [data-type='block'].-l { width: 40px; height: 40px; }
+    [data-type='block'].-xl { width: 60px; height: 60px; }
+    [data-type='block'].-xxl { width: 80px; height: 80px; }
+
+  [data-type='player'] {
     border-radius: 50%;
     background: #f90;
     /* Fit between snapTo blocks. */
@@ -206,7 +219,7 @@ nav {
     height: 18px;
   }
 
-  .-automaton {
+  [data-type='automaton'] {
     border-radius: 50%;
     background: #a1d30d;
     /* Fit between snapTo blocks. */
@@ -214,56 +227,44 @@ nav {
     height: 18px;
   }
 
-  .-fast {
+  [data-type='fast'] {
     background: transparent;
     border: solid 1px #252525;
     color: #fc0;
     width: 19px;
     height: 19px;
   }
-    .-fast:after {
+    [data-type='fast']:after {
       content: '\02605';
       position: absolute;
       top: 10%;
       left: 13%;
     }
 
-  .-health {
+  [data-type='health'] {
     background: #d5d5d5;
     border: solid 1px #252525;
     color: #c00;
     width: 19px;
     height: 19px;
   }
-    .-health:after {
+    [data-type='health']:after {
       content: '\0271A';
       position: absolute;
       top: 11%;
       left: 15%;
     }
 
-  .-mine {
+  [data-type='mine'] {
     background: transparent;
     color: #252525;
     border: solid 1px #252525;
     width: 19px;
     height: 19px;
   }
-    .-mine:after {
+    [data-type='mine']:after {
       content: '\02716';
       position: absolute;
       top: 13%;
       left: 16%;
     }
-
-  .-block { }
-    .-block.-l { width: 40px; height: 40px; }
-    .-block.-xl { width: 60px; height: 60px; }
-    .-block.-xxl { width: 80px; height: 80px; }
-
-.-fast .label,
-.-block .label,
-.-health .label,
-.-mine .label {
-  display: none;
-}
