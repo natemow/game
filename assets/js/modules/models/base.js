@@ -277,7 +277,7 @@ export class Base {
 
     if (blocker === false) {
       // Update element coordinates.
-      this.element.setAttribute('style', `left: ${left}px; top: ${top}px;`);
+      this.element.style = `left: ${left}px; top: ${top}px;`;
       return true;
 
     } else {

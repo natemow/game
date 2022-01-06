@@ -189,7 +189,7 @@ class GameSingleton {
         .join();
     }
 
-    // Set some random health.
+    // Set some random healths.
     for (let i in range) {
       new Health(this)
         .join();
@@ -203,7 +203,7 @@ class GameSingleton {
 
     // Set some random automatons.
     for (let i in range) {
-      new Automaton(this,false, { title: `zombie ${(parseInt(i) + 1)}` })
+      new Automaton(this, false, { title: `zombie ${(parseInt(i) + 1)}` })
         .join()
         .moveRandom();
     }
@@ -290,6 +290,7 @@ class GameSingleton {
   setScoreboard(message) {
 
     const board = Utility.document.getElementById('scoreboard'),
+          lastMessage = (board.firstElementChild ? board.firstElementChild.innerHTML : ''),
           players = this.getPlayers(),
           winner = this.getWinner();
 
@@ -304,26 +305,26 @@ class GameSingleton {
       winner.expire();
     }
 
-    // Print latest message.
-    if (message.length) {
-      message = Utility.createElement('div', {}, {
-        innerHTML: message
-      });
-      board.append(message);
-    }
+    // Print message.
+    const announce = Utility.createElement('div', {
+      class: 'message'
+    }, {
+      innerHTML: (message !== false ? message : lastMessage)
+    });
+    board.append(announce);
 
-    // Print scores.
+    // Print stats.
     if (!winner) {
       for (let key in players) {
         const fast = (players[key].data.fast - Base.minFast);
 
-        message = Utility.createElement('div', {}, {
+        const stats = Utility.createElement('div', {}, {
           innerHTML: `
             <div>${players[key].element.title}</div>
             <div>${(fast >= 1 ? `+${fast} fast mode` : '')}</div>
             <div>${players[key].data.health}</div>`
         });
-        board.append(message);
+        board.append(stats);
       }
     }
 

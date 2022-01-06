@@ -99,6 +99,10 @@ aside {
   #scoreboard > div div:last-child {
     text-align: right;
   }
+  #scoreboard .message {
+    font-style: italic;
+    padding: 0 0 20px 0;
+  }
 
   #controls {
     position: absolute;

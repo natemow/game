@@ -20,7 +20,7 @@ import { Player } from './modules/models/player.js';
 
   if (!showConfigForm) {
     game = new Game(document, config);
-    player = new Player(game,false, false)
+    player = new Player(game, false, false)
       .join();
 
     return;
@@ -48,7 +48,7 @@ import { Player } from './modules/models/player.js';
       }
 
       if (!player) {
-        player = new Player(game,false, false)
+        player = new Player(game, false, false)
           .join();
       }
 
