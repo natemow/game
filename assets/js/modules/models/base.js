@@ -392,9 +392,13 @@ export class Base {
       title = title.substr(0, title.indexOf('('));
     }
 
+    if (this.data.level > 1) {
+      title += ` (l${this.data.level})`;
+    }
+
     this.element.title
       = this.element.firstElementChild.innerHTML
-      = `${title} (l${this.data.level})`;
+      = title;
 
   }
 
