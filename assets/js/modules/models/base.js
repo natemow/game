@@ -21,13 +21,22 @@ export class Base {
    */
   constructor(game, attributes, properties) {
 
+    // Set data.
+    this.data = {
+      expired: false,
+      snapTo: true,
+      level: 1,
+      health: 1,
+      fast: 1
+    };
+
+
     const id = Utility.getUUID(),
           type = this.constructor.name.toLowerCase(),
           existing = Utility.document.querySelectorAll(`[data-type="${type}"]`);
 
     let eClass = `obj`,
         eTitle = `${type} ${(existing.length + 1)}`;
-
 
     // Set element attributes.
     if (attributes) {
@@ -63,14 +72,6 @@ export class Base {
     // Store element.
     this.game.elements[this.element.id] = this;
 
-    // Set data.
-    this.data = {
-      expired: false,
-      snapTo: true,
-      health: 1,
-      fast: 1
-    };
-
     return this;
   }
 
@@ -89,12 +90,14 @@ export class Base {
           );
 
     // Set element coordinates.
-    this.element.style = `left: ${point.x}px; top: ${point.y}px;`;
+    this.element.style = `left: ${point.x}px; top: ${point.y}px; opacity: 0;`;
 
     // "Move" element until randomly generated points resolve to unoccupied map location.
     while (!this.move({ direction: false })) {
       this.join();
     }
+
+    Utility.fadeIn(this.element, false);
 
     return this;
   }
@@ -111,12 +114,25 @@ export class Base {
       clearInterval(this.moveRandomInterval);
     }
 
-    Utility.fadeOut(this.element, () => {
-      delete this.game.elements[this.element.id];
+    if (this.data.level > 1) {
+      // Level-down object.
+      this.levelDown();
 
-      this.element.remove();
-      this.data.expired = true;
-    });
+      Utility.fadeOut(this.element, () => {
+        this.join();
+
+        this.game.setScoreboard(`${this.element.title} has resurrected!`);
+      });
+
+    } else {
+      // Remove object.
+      Utility.fadeOut(this.element, () => {
+        this.data.expired = true;
+
+        this.game.remove(this.element);
+      });
+
+    }
 
     Utility.debug(`${this.element.title} expired`);
 
@@ -277,7 +293,7 @@ export class Base {
 
     if (blocker === false) {
       // Update element coordinates.
-      this.element.style = `left: ${left}px; top: ${top}px;`;
+      this.element.style = `left: ${left}px; top: ${top}px; opacity: 1;`;
       return true;
 
     } else {
@@ -356,9 +372,60 @@ export class Base {
       }
     }, 30);
 
-    // Utility.debug(`new interval ${this.moveRandomInterval} for ${this.element.title}`);
+    Utility.debug(`new interval ${this.moveRandomInterval} for ${this.element.title}`);
 
     return true;
+  }
+
+
+
+  /**
+   * UI helper for levelUp/Down ops.
+   *
+   * @protected
+   * @method level
+   */
+  level() {
+
+    let title = this.element.title;
+    if (title.indexOf('(') > 0) {
+      title = title.substr(0, title.indexOf('('));
+    }
+
+    this.element.title
+      = this.element.firstElementChild.innerHTML
+      = `${title} (l${this.data.level})`;
+
+  }
+
+  /**
+   * Level-down object and reset health.
+   *
+   * @protected
+   * @method levelDown
+   */
+  levelDown() {
+
+    this.data.level -= 1;
+    this.data.health = Base.maxHealth;
+    this.data.fast = Base.minFast;
+
+    this.level();
+  }
+
+  /**
+   * Level-up object.
+   *
+   * @public
+   * @method levelUp
+   */
+  levelUp() {
+
+    this.data.level += 1;
+
+    this.level();
+
+    this.game.setScoreboard(`${this.element.title} has levelled up!`);
   }
 
 }

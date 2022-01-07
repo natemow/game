@@ -169,8 +169,6 @@ nav {
 
 .obj {
   position: absolute;
-  z-index: 0;
-  opacity: 1;
   display: block;
   text-align: center;
   line-height: 1;
@@ -190,6 +188,7 @@ nav {
   .obj .label {
     position: absolute;
     top: -8px;
+    left: 8px;
     z-index: 1;
     padding: 2px 3px 1px 3px;
     background: #ddd;

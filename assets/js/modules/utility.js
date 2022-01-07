@@ -124,6 +124,22 @@ export class Utility {
     return false;
   }
 
+  /**
+   * Sleep for N ms.
+   *
+   * @static
+   * @method sleep
+   * @param { number } ms The milliseconds to sleep for.
+   * @returns { Promise } The promised timeout.
+   */
+  static sleep(ms) {
+    return new Promise((resolve, reject) => {
+      let timeout = setTimeout(() => {
+        resolve(timeout);
+      }, ms);
+    });
+
+  }
 
   // DOM methods.
   /**
@@ -197,14 +213,14 @@ export class Utility {
    * @param { string } className The class name.
    * @param { number } timeout Remove the class after N ms.
    */
-  static toggleClass(element, className, timeout) {
+  static async toggleClass(element, className, timeout) {
 
     element.classList.toggle(className);
 
     if (timeout && timeout > 0) {
-      const timer = setTimeout(() => {
+      let interval = setTimeout(() => {
         element.classList.toggle(className);
-        clearTimeout(timer);
+        clearTimeout(interval);
       }, timeout);
     }
 
@@ -214,22 +230,59 @@ export class Utility {
    * Fade element out.
    *
    * @static
-   * @method toggleClass
+   * @method fadeOut
    * @param { Element } element The element.
    * @param { function } callback Callback after fade finishes.
    */
-  static fadeOut(element, callback) {
+  static async fadeOut(element, callback) {
 
-    const interval = setInterval(function () {
-      if (element.style.opacity > 0) {
-        element.style.opacity -= 0.1;
-      } else {
-        clearInterval(interval);
-        if (typeof callback === 'function') {
-          callback();
-        }
-      }
-    }, 10);
+    // Temp.
+    element.style.opacity = 0;
+    if (typeof callback === 'function') {
+      callback();
+    }
+
+    // for (let i = 1; i > 0; i -= 0.1) {
+    //   element.style.opacity = i.toFixed(1);
+    //
+    //   await Utility
+    //     .sleep(1)
+    //     .then(timeout => clearTimeout(timeout));
+    // }
+    //
+    // if (typeof callback === 'function') {
+    //   callback();
+    // }
+
+  }
+
+  /**
+   * Fade element out.
+   *
+   * @static
+   * @method fadeOut
+   * @param { Element } element The element.
+   * @param { function } callback Callback after fade finishes.
+   */
+  static async fadeIn(element, callback) {
+
+    // Temp.
+    element.style.opacity = 1;
+    if (typeof callback === 'function') {
+      callback();
+    }
+
+    // for (let i = 0; i < 1; i += 0.1) {
+    //   element.style.opacity = i.toFixed(1);
+    //
+    //   await Utility
+    //     .sleep(1)
+    //     .then(timeout => clearTimeout(timeout));
+    // }
+    //
+    // if (typeof callback === 'function') {
+    //   callback();
+    // }
 
   }
 

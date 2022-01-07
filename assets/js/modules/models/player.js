@@ -181,14 +181,14 @@ export class Player extends Base {
    */
   isWinner() {
 
-    if (this.data.expired) {
+    if (this.data.expired || this.data.health <= 0) {
       return false;
     }
 
     const players = this.game.getPlayers(),
-          identifiers = Object.keys(players);
+          keys = Object.keys(players);
 
-    if (identifiers.length === 1 && identifiers[0] === this.element.id) {
+    if (keys.length === 1 && keys[0] === this.element.id) {
       return true;
     }
 

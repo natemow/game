@@ -171,11 +171,35 @@ class GameSingleton {
     sidebar.append(scoreboard);
     sidebar.append(controls);
 
+    this.populate();
 
+  }
 
-    const range = Utility.getRange(10);
+  /**
+   * Populate the game with objects.
+   *
+   * @private
+   * @method populate
+   */
+  populate() {
+
+    const map = Utility.document.getElementById('map'),
+          range = Utility.getRange(10),
+          winner = this.getWinner();
+
+    // Clear map by type.
+    const remove = (type) => {
+      const existing = Utility.document.querySelectorAll(`[data-type="${type}"]`);
+
+      if (existing) {
+        for (let i = 0; i < existing.length; i++) {
+          this.remove(existing[i]);
+        }
+      }
+    }
 
     // Set some random blocks.
+    remove('block');
     for (let i in range) {
       const size = Utility.getRandomFromArray(['', '-l', '-xl', '-xxl']);
 
@@ -184,29 +208,59 @@ class GameSingleton {
     }
 
     // Set some random fasts.
+    remove('fast');
     for (let i in Utility.getRange(4)) {
       new Fast(this)
         .join();
     }
 
     // Set some random healths.
+    remove('health');
     for (let i in range) {
       new Health(this)
         .join();
     }
 
     // Set some random mines.
+    remove('mine');
     for (let i in range) {
       new Mine(this)
         .join();
     }
 
     // Set some random automatons.
+    remove('automaton');
     for (let i in range) {
-      new Automaton(this, false, { title: `zombie ${(parseInt(i) + 1)}` })
-        .join()
-        .moveRandom();
+      const automaton = new Automaton(this, false, { title: `zombie ${(parseInt(i) + 1)}` })
+        .join();
+
+      automaton.moveRandom();
     }
+
+  }
+
+  /**
+   * Remove element from game.
+   *
+   * @private
+   * @method remove
+   * @param { Element } element The element to remove.
+   */
+  remove(element) {
+
+    if (element.id) {
+      for (let key in this.elements) {
+        delete this.elements[key][element.id];
+      }
+      delete this.elements[element.id];
+
+      const score = Utility.document.getElementById(`stats-${element.id}`);
+      if (score) {
+        score.remove();
+      }
+    }
+
+    element.remove();
 
   }
 
@@ -252,9 +306,7 @@ class GameSingleton {
    */
   getPlayers() {
     return Utility.getFilteredObject(this.elements, ([key, value]) => {
-      return (value.constructor.name === 'Player' || value.constructor.name === 'Automaton')
-        && (value.data.health > 0)
-        && (value.data.expired === false);
+      return (value.constructor.name === 'Player' || value.constructor.name === 'Automaton');
     });
   }
 
@@ -270,9 +322,9 @@ class GameSingleton {
     const players = this.getPlayers();
 
     let winner = false;
-    for (let identifier in players) {
-      if (players[identifier].isWinner()) {
-        winner = players[identifier];
+    for (let key in players) {
+      if (players[key].isWinner()) {
+        winner = players[key];
         break;
       }
     }
@@ -294,37 +346,63 @@ class GameSingleton {
           players = this.getPlayers(),
           winner = this.getWinner();
 
-    // Clear board.
-    while (board.firstElementChild) {
-      board.firstElementChild.remove();
-    }
-
     // Winner!
     if (winner !== false) {
-      message = `${winner.element.title} has won!`;
-      winner.expire();
+      // Clear board.
+      while (board.firstElementChild) {
+        board.firstElementChild.remove();
+      }
+
+      // Repopulate game.
+      this.populate();
+
+      // Level-up winner and rejoin.
+      winner.levelUp();
+      winner.join();
+
+      return;
     }
 
+
+    // Build board.
+    let announce = board.querySelector('.message');
+    if (!announce) {
+      announce = Utility.createElement('div', { class: 'message' }, false);
+
+      board.append(announce);
+    }
+
+    for (let key in players) {
+      const id = `stats-${players[key].element.id}`;
+      let stats = document.getElementById(id);
+
+      if (!stats) {
+        stats = Utility.createElement('div', { id }, {
+          innerHTML: `
+            <div class="title">${players[key].element.title}</div>
+            <div class="fast"></div>
+            <div class="health"></div>`
+        });
+
+        board.append(stats);
+      }
+    }
+
+
     // Print message.
-    const announce = Utility.createElement('div', {
-      class: 'message'
-    }, {
-      innerHTML: (message !== false ? message : lastMessage)
-    });
-    board.append(announce);
+    announce.innerHTML = (message !== false ? message : lastMessage);
 
     // Print stats.
     if (!winner) {
       for (let key in players) {
-        const fast = (players[key].data.fast - Base.minFast);
+        const fast = (players[key].data.fast - Base.minFast),
+              stats = Utility.document.getElementById(`stats-${players[key].element.id}`);
 
-        const stats = Utility.createElement('div', {}, {
-          innerHTML: `
-            <div>${players[key].element.title}</div>
-            <div>${(fast >= 1 ? `+${fast} fast mode` : '')}</div>
-            <div>${players[key].data.health}</div>`
-        });
-        board.append(stats);
+        if (stats) {
+          stats.querySelector('.title').innerHTML = players[key].element.title;
+          stats.querySelector('.fast').innerHTML = (fast >= 1 ? `+${fast} fast mode` : '');
+          stats.querySelector('.health').innerHTML = players[key].data.health;
+        }
       }
     }
 
