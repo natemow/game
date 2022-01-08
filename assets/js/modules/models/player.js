@@ -44,7 +44,7 @@ export class Player extends Base {
   play(e) {
 
     // Automatons can't respond to keyboard events.
-    if (this.constructor.name === 'Automaton') {
+    if (this.isAutomaton()) {
       return false;
     }
 
@@ -123,7 +123,7 @@ export class Player extends Base {
 
         } else {
           // Run away!
-          if (target.constructor.name === 'Automaton') {
+          if (target.isAutomaton()) {
             target.moveRandom(true);
           }
 
@@ -188,11 +188,9 @@ export class Player extends Base {
     const players = this.game.getPlayers(),
           keys = Object.keys(players);
 
-    if (keys.length === 1 && keys[0] === this.element.id) {
-      return true;
-    }
+    return (keys.length === 1 && keys[0] === this.element.id);
 
-    return false;
+
   }
 
 }

@@ -45,7 +45,7 @@ export class Utility {
    * @param { Object } obj The object.
    */
   static getRandomKey(obj) {
-    var keys = Object.keys(obj);
+    let keys = Object.keys(obj);
     return keys[keys.length * Math.random() << 0];
   }
 
@@ -141,6 +141,7 @@ export class Utility {
 
   }
 
+
   // DOM methods.
   /**
    * The document object.
@@ -232,12 +233,12 @@ export class Utility {
    * @static
    * @method fadeOut
    * @param { Element } element The element.
-   * @param { function } callback Callback after fade finishes.
+   * @param { function || boolean } callback Callback after fade finishes.
    */
   static async fadeOut(element, callback) {
 
     // Temp.
-    element.style.opacity = 0;
+    element.style.opacity = '0';
     if (typeof callback === 'function') {
       callback();
     }
@@ -262,12 +263,12 @@ export class Utility {
    * @static
    * @method fadeOut
    * @param { Element } element The element.
-   * @param { function } callback Callback after fade finishes.
+   * @param { function || boolean } callback Callback after fade finishes.
    */
   static async fadeIn(element, callback) {
 
     // Temp.
-    element.style.opacity = 1;
+    element.style.opacity = '1';
     if (typeof callback === 'function') {
       callback();
     }

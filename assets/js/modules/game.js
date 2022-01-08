@@ -109,11 +109,7 @@ class GameSingleton {
 
 
     // Set header.
-    const title = Utility.createElement('h1', false, {
-      innerText: this.config.header.title
-    });
-    header.append(title);
-
+    header.innerHTML = `<h1>${this.config.header.title}</h1>`;
 
     // Set footer navigation/help.
     const others = [],
@@ -171,7 +167,8 @@ class GameSingleton {
     sidebar.append(scoreboard);
     sidebar.append(controls);
 
-    this.populate();
+    this.populate()
+    .finally();
 
   }
 
@@ -180,69 +177,77 @@ class GameSingleton {
    *
    * @private
    * @method populate
+   * @returns { Promise } The promised results of the population.
    */
   populate() {
 
-    const map = Utility.document.getElementById('map'),
-          range = Utility.getRange(10),
-          winner = this.getWinner();
+    const types = [ Block, Fast, Health, Mine, Automaton ],
+          promises = [];
 
-    // Clear map by type.
-    const remove = (type) => {
-      const existing = Utility.document.querySelectorAll(`[data-type="${type}"]`);
+    for (let i in types) {
+      promises.push(
 
-      if (existing) {
-        for (let i = 0; i < existing.length; i++) {
-          this.remove(existing[i]);
-        }
-      }
+        new Promise((resolve, reject) => { resolve(types[i]); })
+          .then((type) => {
+
+            // Clear map by type.
+            let existing = Utility.document.querySelectorAll(`[data-type="${type.name.toLowerCase()}"]`);
+            if (existing) {
+              for (let i = 0; i < existing.length; i++) {
+                let remove = true,
+                    base = this.elements[existing[i].id];
+
+                if (base.isAutomaton() && base.isWinner()) {
+                  remove = false;
+                }
+
+                if (remove) {
+                  this.remove(existing[i]);
+                }
+              }
+            }
+
+            return type;
+          })
+          .then((type) => {
+
+            // Create and join new {type}s to game.
+            let range = Utility.getRange(10);
+            if (type.name === 'Fast') {
+              range = Utility.getRange(4);
+            }
+
+            for (let i in range) {
+              let attributes = false,
+                  properties = false;
+
+              switch (type.name) {
+                case 'Block':
+                  attributes = { class: Utility.getRandomFromArray(['', '-l', '-xl', '-xxl']) };
+                  break;
+
+                case 'Automaton':
+                  properties = { title: `zombie ${(parseInt(i) + 1)}` };
+                  break;
+              }
+
+              new type(this, attributes, properties)
+                .join();
+            }
+
+            return true;
+          })
+
+      );
     }
 
-    // Set some random blocks.
-    remove('block');
-    for (let i in range) {
-      const size = Utility.getRandomFromArray(['', '-l', '-xl', '-xxl']);
-
-      new Block(this, { class: size }, false)
-        .join();
-    }
-
-    // Set some random fasts.
-    remove('fast');
-    for (let i in Utility.getRange(4)) {
-      new Fast(this)
-        .join();
-    }
-
-    // Set some random healths.
-    remove('health');
-    for (let i in range) {
-      new Health(this)
-        .join();
-    }
-
-    // Set some random mines.
-    remove('mine');
-    for (let i in range) {
-      new Mine(this)
-        .join();
-    }
-
-    // Set some random automatons.
-    remove('automaton');
-    for (let i in range) {
-      const automaton = new Automaton(this, false, { title: `zombie ${(parseInt(i) + 1)}` })
-        .join();
-
-      automaton.moveRandom();
-    }
-
+    return Promise.all(promises);
   }
 
   /**
    * Remove element from game.
    *
-   * @private
+   * @protected
    * @method remove
    * @param { Element } element The element to remove.
    */
@@ -250,7 +255,7 @@ class GameSingleton {
 
     if (element.id) {
       for (let key in this.elements) {
-        delete this.elements[key][element.id];
+        delete this.elements[key].game[element.id];
       }
       delete this.elements[element.id];
 
@@ -311,15 +316,18 @@ class GameSingleton {
   }
 
   /**
-   * Get game winner.
+   * Print the scoreboard.
    *
    * @public
-   * @method getWinner
-   * @returns { boolean || Player } Returns winning player if exists, else false.
+   * @method setScoreboard
+   * @param { string } message The header message to print.
    */
-  getWinner() {
+  setScoreboard(message) {
 
-    const players = this.getPlayers();
+    const scoreboard = Utility.document.getElementById('scoreboard'),
+          lastMessage = (scoreboard.firstElementChild ? scoreboard.firstElementChild.innerHTML : ''),
+          players = this.getPlayers();
+
 
     let winner = false;
     for (let key in players) {
@@ -329,47 +337,31 @@ class GameSingleton {
       }
     }
 
-    return winner;
-  }
-
-  /**
-   * Print the scoreboard.
-   *
-   * @public
-   * @method setScoreboard
-   * @param { string } message The header message to print.
-   */
-  setScoreboard(message) {
-
-    const board = Utility.document.getElementById('scoreboard'),
-          lastMessage = (board.firstElementChild ? board.firstElementChild.innerHTML : ''),
-          players = this.getPlayers(),
-          winner = this.getWinner();
-
     // Winner!
     if (winner !== false) {
-      // Clear board.
-      while (board.firstElementChild) {
-        board.firstElementChild.remove();
+      // Clear scoreboard.
+      while (scoreboard.firstElementChild) {
+        scoreboard.firstElementChild.remove();
       }
 
       // Repopulate game.
-      this.populate();
-
-      // Level-up winner and rejoin.
-      winner.levelUp();
-      winner.join();
+      this.populate()
+        .finally(() => {
+          // Level-up winner and rejoin.
+          winner.levelUp();
+          winner.join();
+        });
 
       return;
     }
 
 
-    // Build board.
-    let announce = board.querySelector('.message');
+    // Build scoreboard.
+    let announce = scoreboard.querySelector('.message');
     if (!announce) {
       announce = Utility.createElement('div', { class: 'message' }, false);
 
-      board.append(announce);
+      scoreboard.append(announce);
     }
 
     for (let key in players) {
@@ -384,7 +376,7 @@ class GameSingleton {
             <div class="health"></div>`
         });
 
-        board.append(stats);
+        scoreboard.append(stats);
       }
     }
 

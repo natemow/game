@@ -30,7 +30,6 @@ form {
   form button {
     padding: 8px;
   }
-
   form > div {
     display: flex;
     justify-content: space-between;
@@ -56,7 +55,6 @@ aside {
 
 main {
   height: 100%;
-  overflow: hidden;
   background-color: #000;
   background-size: 20px 20px;
   background-image: linear-gradient(to right, #252525 1px, transparent 1px), linear-gradient(to bottom, #252525 1px, transparent 1px);

@@ -99,13 +99,17 @@ export class Base {
 
     Utility.fadeIn(this.element, false);
 
+    if (this.isAutomaton()) {
+      this.moveRandom(false);
+    }
+
     return this;
   }
 
   /**
    * Removes object from game.
    *
-   * @protected
+   * @public
    * @method expire
    */
   expire() {
@@ -120,15 +124,13 @@ export class Base {
 
       Utility.fadeOut(this.element, () => {
         this.join();
-
-        this.game.setScoreboard(`${this.element.title} has resurrected!`);
       });
 
     } else {
       // Remove object.
-      Utility.fadeOut(this.element, () => {
-        this.data.expired = true;
+      this.data.expired = true;
 
+      Utility.fadeOut(this.element, () => {
         this.game.remove(this.element);
       });
 
@@ -156,7 +158,7 @@ export class Base {
    * @method moveWrapParams
    * @param { string } axis The axis.
    * @param { number } value The X/Y value.
-   * @param { callback } callback The callback function.
+   * @param { function } callback The callback function.
    */
   moveWrapParams(axis, value, callback) {
 
@@ -264,6 +266,7 @@ export class Base {
 
 
     if (this.game.config.map.wrap === true) {
+      console.log('wrap');
       // Wrap X/Y movement.
       left = this.moveWrap('x', left);
       top = this.moveWrap('y', top);
@@ -368,7 +371,7 @@ export class Base {
       }
       // Move recursively.
       if (count === threshold) {
-        this.moveRandom();
+        this.moveRandom(fast);
       }
     }, 30);
 
@@ -387,13 +390,16 @@ export class Base {
    */
   level() {
 
-    let title = this.element.title;
-    if (title.indexOf('(') > 0) {
-      title = title.substr(0, title.indexOf('('));
+    let title = this.element.title,
+        index = title.indexOf('(');
+    if (index > 0) {
+      title = title
+        .substr(0, index)
+        .trim();
     }
 
     if (this.data.level > 1) {
-      title += ` (l${this.data.level})`;
+      title += ` (L${this.data.level})`;
     }
 
     this.element.title
@@ -428,8 +434,19 @@ export class Base {
     this.data.level += 1;
 
     this.level();
+  }
 
-    this.game.setScoreboard(`${this.element.title} has levelled up!`);
+
+
+  /**
+   * Check if object is automaton.
+   *
+   * @public
+   * @method isAutomaton
+   * @returns { boolean }
+   */
+  isAutomaton() {
+    return (this.constructor.name === 'Automaton');
   }
 
 }
